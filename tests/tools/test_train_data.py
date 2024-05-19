@@ -3,6 +3,8 @@ from pathlib import Path
 from unittest.mock import AsyncMock, call
 
 import pytest
+from pydantic import ValidationError
+
 from openiziai.tools.train_data import TrainDataTool
 
 
@@ -52,3 +54,8 @@ async def test_create_train_data(train_data_tool):
         assert len(example['messages']) == expected_len
         assert example['messages'][1]['role'] == 'user'
         assert example['messages'][2]['role'] == 'assistant'
+
+
+def test_init_invalid_data():
+    with pytest.raises(ValidationError):
+        TrainDataTool(client=None, data=None, task=None)
