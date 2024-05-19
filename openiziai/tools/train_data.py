@@ -1,6 +1,7 @@
 import json
 import random
 from datetime import datetime
+from math import ceil
 from pathlib import Path
 from typing import Any, Optional
 
@@ -171,3 +172,49 @@ class TrainDataTool(BaseModel):
                 ) as file:
                     for result in results:
                         await file.write(json.dumps(result) + '\n')
+
+    async def create_train_data(  # noqa
+        self,
+        n_examples: int,
+        n_batch: int,
+        temperature: float = 0.5,
+        max_tokens: int = 1000,
+        max_context_length: int = 8,
+    ) -> str:
+        """Cria os dados de treino.
+
+        :param n_examples: Número de exemplos que devem ser criados.
+        :param n_batch: Número de batches para ser feitos concorrentes.
+        :param temperature: Nível de criatividade do modelo ao criar os exemplos. Padrão 0.5.
+        :param max_tokens: Limite de tokens da resposta do modelo. Padrão 1000.
+        :max_context_length: Limite de exemplos utilizados para contexto.
+        :type n_examples: int
+        :type n_batch: int
+        :type temperature: float
+        :type max_tokens: int
+        :type max_context_length: int
+        :return: Nome do arquivo JSONL salvo.
+        :rtype: str
+        """  # noqa
+        sender, receiver = trio.open_memory_channel(0)
+        self._n_batch = n_batch
+        _n_examples = ceil(n_examples / self._n_batch)
+        self._n_examples = _n_examples * self._n_batch
+
+        async with trio.open_nursery() as nursery:
+            async with sender, receiver:
+                for _ in range(self._n_batch):
+                    nursery.start_soon(
+                        self.create_examples,
+                        _n_examples,
+                        temperature,
+                        max_tokens,
+                        max_context_length,
+                        sender.clone(),
+                    )
+                    nursery.start_soon(
+                        self.create_train_file,
+                        receiver.clone(),
+                    )
+
+        return str(self._file)
