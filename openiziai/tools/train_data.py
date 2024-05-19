@@ -9,6 +9,8 @@ from pydantic import (
 )
 from openiziai.schemas import DataDict
 from openiziai.task import Task
+
+
 class TrainDataTool(BaseModel):
     """Cria dados preparados para fine tuning.
 
@@ -67,3 +69,13 @@ class TrainDataTool(BaseModel):
         self._train_data_dir = self._create_dir_if_not_exist(
             self._root / 'data' / 'train'
         )
+
+    @property
+    def train_data_dir(self) -> str:
+        return str(self._train_data_dir)
+
+    @staticmethod
+    def _create_dir_if_not_exist(dir: Path) -> Path:
+        dir.mkdir(parents=True, exist_ok=True)
+
+        return dir
