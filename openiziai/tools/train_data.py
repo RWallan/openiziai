@@ -237,3 +237,15 @@ class TrainDataTool(BaseModel):
             )
             return None
         return self._n_batch
+
+    def __repr__(self) -> str:
+        return (
+            'TrainDataTool('
+            f'backstory={self.task.backstory},'
+            f'role={self.task.role}, '
+            f'goal={self.task.goal}, '
+            f'n_examples={self.n_examples}, '
+            f'n_batch={self.n_batch}, '
+            f'train_data_dir={self.train_data_dir}'
+            ')'
+        )
