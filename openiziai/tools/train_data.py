@@ -1,5 +1,6 @@
 import json
 import random
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
@@ -153,3 +154,20 @@ class TrainDataTool(BaseModel):
             examples.append(example)
         async with sender:
             await sender.send(examples)
+
+    async def create_train_file(self, receiver: trio.abc.ReceiveChannel):
+        self._file = (
+            self._train_data_dir
+            / f'train_data_{datetime.now().strftime("%Y%m%d")}.jsonl'
+        )
+
+        if self._file.exists():
+            self._file.unlink()
+
+        async with receiver:
+            async for results in receiver:
+                async with await trio.open_file(
+                    self._file, 'a', encoding='utf-8'
+                ) as file:
+                    for result in results:
+                        await file.write(json.dumps(result) + '\n')
