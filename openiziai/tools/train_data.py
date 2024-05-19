@@ -4,6 +4,7 @@ from datetime import datetime
 from math import ceil
 from pathlib import Path
 from typing import Any, Optional
+from uuid import uuid4
 
 import trio
 from openai import OpenAI
@@ -54,6 +55,7 @@ class TrainDataTool(BaseModel):
     _root: Path = PrivateAttr(default_factory=Path.cwd)
     _train_data_dir: Path
     _template: str
+    _hash: str = PrivateAttr(default_factory=uuid4)
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -77,6 +79,10 @@ class TrainDataTool(BaseModel):
         self._train_data_dir = self._create_dir_if_not_exist(
             self._root / 'data' / 'train'
         )
+
+    @property
+    def id(self) -> str:
+        return self._hash
 
     @property
     def train_data_dir(self) -> str:
@@ -159,7 +165,7 @@ class TrainDataTool(BaseModel):
     async def create_train_file(self, receiver: trio.abc.ReceiveChannel):
         self._file = (
             self._train_data_dir
-            / f'train_data_{datetime.now().strftime("%Y%m%d")}.jsonl'
+            / f'train_{self.id}_{datetime.now().strftime("%Y%m%d")}.jsonl'
         )
 
         if self._file.exists():
