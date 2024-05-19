@@ -238,6 +238,40 @@ class TrainDataTool(BaseModel):
             return None
         return self._n_batch
 
+    def execute(  # noqa
+        self,
+        n_examples: int,
+        n_batch: int,
+        temperature: float = 0.5,
+        max_tokens: int = 1000,
+        max_context_length: int = 8,
+    ) -> str:
+        """Cria os dados de treino.
+
+        :param n_examples: Número de exemplos que devem ser criados.
+        :param n_batch: Número de batches para ser feitos concorrentes.
+        :param temperature: Nível de criatividade do modelo ao criar os exemplos. Padrão 0.5.
+        :param max_tokens: Limite de tokens da resposta do modelo. Padrão 1000.
+        :max_context_length: Limite de exemplos utilizados para contexto.
+        :type n_examples: int
+        :type n_batch: int
+        :type temperature: float
+        :type max_tokens: int
+        :type max_context_length: int
+        :return: Nome do arquivo JSONL salvo.
+        :rtype: str
+        """  # noqa
+        file = trio.run(
+            self.create_train_data,
+            n_examples,
+            n_batch,
+            temperature,
+            max_tokens,
+            max_context_length,
+        )
+
+        return file
+
     def __repr__(self) -> str:
         return (
             'TrainDataTool('
