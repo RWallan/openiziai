@@ -1,5 +1,7 @@
 from pathlib import Path
 from typing import Any, Optional
+
+import trio
 from openai import OpenAI
 from pydantic import (
     BaseModel,
@@ -7,8 +9,10 @@ from pydantic import (
     Field,
     PrivateAttr,
 )
+
 from openiziai.schemas import DataDict
 from openiziai.task import Task
+from openiziai.utils import exponential_backoff
 
 
 class TrainDataTool(BaseModel):
@@ -79,3 +83,71 @@ class TrainDataTool(BaseModel):
         dir.mkdir(parents=True, exist_ok=True)
 
         return dir
+
+    @exponential_backoff()
+    async def create_examples(  # noqa
+        self,
+        n_examples: int,
+        temperature: float,
+        max_tokens: int,
+        max_context_length: int,
+        sender: trio.abc.SendChannel[list[dict[str, str]]],
+    ) -> None:
+        description = dict(
+            backstory=self.task.backstory,
+            role=self.task.role,
+            goal=self.task.goal,
+            **self.data,
+        )
+        prompt = self._template.format(description=description)
+
+        short_system = {'role': 'system', 'content': self.task.short_backstory}
+
+        examples = []
+
+        for _ in range(n_examples):
+            context = (
+                [
+                    {'role': 'assistant', 'content': example}
+                    for example in examples
+                ]
+                if len(examples) <= max_context_length
+                else [
+                    {'role': 'assistant', 'content': example}
+                    for example in random.sample(examples, 8)
+                ]
+            )
+
+            messages = [
+                {
+                    'role': 'system',
+                    'content': prompt,
+                }
+            ] + context
+
+            result = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,  # pyright: ignore
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+
+            _response = result.choices[0].message.content
+            if not _response:
+                print('Algo de errado aconteceu ao criar o prompt.')
+                continue
+            response = json.loads(_response)
+            example = {
+                'messages': [
+                    short_system,
+                    {'role': 'user', 'content': response.get('prompt')},
+                    {
+                        'role': 'assistant',
+                        'content': response.get('response'),
+                    },
+                ]
+            }
+
+            examples.append(example)
+        async with sender:
+            await sender.send(examples)

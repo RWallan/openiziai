@@ -1,3 +1,4 @@
+import json
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,6 +12,22 @@ from openiziai.tools.train_data import TrainDataTool
 @pytest.fixture()
 def openai_client():
     client = MagicMock(spec=OpenAI)
+    client.chat = MagicMock()
+    client.chat.completions = MagicMock()
+    client.chat.completions.create = MagicMock(
+        return_value=MagicMock(
+            choices=[
+                MagicMock(
+                    message=MagicMock(
+                        content=json.dumps({
+                            'prompt': 'Test prompt',
+                            'response': 'Test response',
+                        })
+                    )
+                )
+            ]
+        )
+    )
     return client
 
 
