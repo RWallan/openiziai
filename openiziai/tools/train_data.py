@@ -218,3 +218,22 @@ class TrainDataTool(BaseModel):
                     )
 
         return str(self._file)
+
+    @property
+    def n_examples(self) -> Optional[int]:
+        # if not getattr(self, '_n_examples'):
+        if not self._n_examples:
+            print(
+                'Você deve criar um dataset de treino com `create_train_data`.'
+            )
+            return None
+        return self._n_examples
+
+    @property
+    def n_batch(self) -> Optional[int]:
+        if not getattr(self, '_n_batch'):
+            print(
+                'Você deve criar um dataset de treino com `create_train_data`.'
+            )
+            return None
+        return self._n_batch

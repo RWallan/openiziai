@@ -59,3 +59,9 @@ async def test_create_train_data(train_data_tool):
 def test_init_invalid_data():
     with pytest.raises(ValidationError):
         TrainDataTool(client=None, data=None, task=None)
+
+
+def test_properties(train_data_tool):
+    assert train_data_tool.train_data_dir.endswith('data/train')
+    assert train_data_tool.n_examples is None
+    assert train_data_tool.n_batch is None
