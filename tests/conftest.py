@@ -10,8 +10,13 @@ from openiziai.tools.train_data import TrainDataTool
 
 
 @pytest.fixture()
-def openai_client():
+def client():
     client = MagicMock(spec=OpenAI)
+    return client
+
+
+@pytest.fixture()
+def openai_chat(client):
     client.chat = MagicMock()
     client.chat.completions = MagicMock()
     client.chat.completions.create = MagicMock(
@@ -47,9 +52,9 @@ def valid_data_dict():
 
 
 @pytest.fixture()
-def train_data_tool(openai_client, valid_task, valid_data_dict):
+def train_data_tool(openai_chat, valid_task, valid_data_dict):
     return TrainDataTool(
-        client=openai_client,
+        client=openai_chat,
         data=valid_data_dict,
         task=valid_task,
     )
