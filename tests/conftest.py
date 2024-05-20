@@ -1,9 +1,11 @@
 import json
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 from openai import OpenAI
 
+from openiziai.fine_tuning import FineTuning
 from openiziai.task import Task
 from openiziai.tools.train_data import TrainDataTool
 
@@ -40,6 +42,18 @@ def openai_fine_tuning(client):
     client.files = MagicMock()
     client.files.create.return_value.id = 'file-id'
     return client
+
+
+@pytest.fixture()
+def fine_tuning(valid_task, openai_fine_tuning):
+    mock_path = MagicMock(spec=Path)
+    mock_path.stat.return_value.st_size = 100000
+
+    fine_tuning = FineTuning(
+        client=openai_fine_tuning, train_file=mock_path, task=valid_task
+    )
+
+    return fine_tuning
 
 
 @pytest.fixture()

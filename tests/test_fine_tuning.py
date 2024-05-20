@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 from pydantic import ValidationError
@@ -22,3 +22,16 @@ def test_size_validation_failure(openai_fine_tuning):
 
     with pytest.raises(ValidationError):
         FineTuning(client=openai_fine_tuning, train_file=mock_path)
+
+
+def test_upload_file_to_openai(fine_tuning):
+    with patch('builtins.open', mock_open(read_data="data")):
+        fine_tuning.upload_file_to_openai()
+
+        assert fine_tuning.file_id == 'file-id'
+
+
+def test_file_id_without_uploaded(fine_tuning):
+    with patch('builtins.open', mock_open(read_data="data")):
+        assert fine_tuning.file_id == 'file-id'
+

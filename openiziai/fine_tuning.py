@@ -28,7 +28,7 @@ class FineTuning(BaseModel):
     train_file: Path | str
     task: Task = Field(default=None)
     model: str = Field(default='gpt-3.5-turbo')
-    _file_id: str
+    _file_id: str = PrivateAttr(default=None)
     _job_id: str = PrivateAttr(default=None)
     _job_status: JobStatus = PrivateAttr(default=None)
 
@@ -50,3 +50,18 @@ class FineTuning(BaseModel):
             )
 
         return v
+
+    def upload_file_to_openai(self) -> None:
+        self._file_id = self.client.files.create(
+            file=open(self.train_file, 'rb'), purpose='fine-tune'
+        ).id
+
+    @property
+    def file_id(self) -> str:
+        if not self._file_id:
+            print(
+                'Nenhum dado foi enviado ainda.',
+                'Enviando arquivo para a OpenAI.',
+            )
+            self.upload_file_to_openai()
+        return self._file_id
