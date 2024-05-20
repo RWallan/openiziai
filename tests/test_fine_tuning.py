@@ -14,7 +14,7 @@ def test_init_invalid_data():
 
 def test_size_validation_success(openai_fine_tuning, valid_task):
     mock_path = MagicMock(spec=Path)
-    mock_path.stat.return_value.st_size = 100000  # Menos de 512MB
+    mock_path.stat.return_value.st_size = 100000
 
     fine_tuning = FineTuning(
         client=openai_fine_tuning, task=valid_task, train_file=mock_path
