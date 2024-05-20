@@ -2,10 +2,10 @@
 name = "openiziai"
 version = "0.1.0"
 description = "Interface para se comunicar com a api da OpenAI adotando as melhores práticas de LLM para criar e se comunicar com um agente."
-licence = "MIT"
 authors = ["RWallan <3am.richardwallan@gmail.com>"]
 readme = "README.md"
 packages = [{include = "openiziai"}]
+license = "MIT"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
