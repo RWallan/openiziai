@@ -13,7 +13,7 @@ def prep_data(pipeline: Pipeline, persist: bool = True) -> DataDict:
     if persist:
         path = Path(__file__).cwd() / 'data' / 'pipelined_data'
         path.mkdir(parents=True, exist_ok=True)
-        file = path / f'pipelined_data_{datetime.now().strftime('%Y%m%d')}.pkl'
+        file = path / f'pipelined_data_{datetime.now().strftime("%Y%m%d")}.pkl'
 
         with open(file, 'wb') as f:
             pickle.dump(_pipelined_data, f, protocol=-1)
