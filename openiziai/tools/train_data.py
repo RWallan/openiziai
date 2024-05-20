@@ -276,6 +276,13 @@ class TrainDataTool(BaseModel):
 
         return file
 
+    @property
+    def file(self) -> Optional[str]:
+        if not self._file:
+            print('Nenhum dado de treino foi criado com esta instância.')
+            return None
+        return str(self._file)
+
     def __repr__(self) -> str:
         return (
             'TrainDataTool('
@@ -284,6 +291,6 @@ class TrainDataTool(BaseModel):
             f'goal={self.task.goal}, '
             f'n_examples={self.n_examples}, '
             f'n_batch={self.n_batch}, '
-            f'train_data_dir={self.train_data_dir}'
+            f'file={self.file}'
             ')'
         )
