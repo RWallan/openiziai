@@ -2,9 +2,20 @@ from typing import Any, Optional, Self
 
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic.dataclasses import dataclass
 
 from openiziai.schemas import GPTModel
 from openiziai.task import Task
+
+
+@dataclass
+class PromptResponse:
+    id: str
+    prompt: str
+    response: str | None
+    temperature: float
+    tokens: int | None
+    fine_tuned_model: str
 
 
 class Agent(BaseModel):
@@ -51,3 +62,35 @@ class Agent(BaseModel):
         """
 
         return template
+
+    def prompt(
+        self, prompt: str, temperature: float = 0.5, max_tokens: int = 1000
+    ) -> PromptResponse:
+        messages = [
+            {
+                'role': 'system',
+                'content': self._template,
+            },
+            {
+                'role': 'user',
+                'content': prompt,
+            },
+        ]
+
+        result = self.client.chat.completions.create(
+            messages=messages,  # pyright: ignore
+            model=self._fine_tuned_model,
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+
+        response = PromptResponse(
+            id=result.id,
+            prompt=prompt,
+            response=result.choices[0].message.content,
+            temperature=temperature,
+            tokens = result.usage.total_tokens if result.usage else None,
+            fine_tuned_model=self._fine_tuned_model,
+        )
+
+        return response

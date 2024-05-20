@@ -22,6 +22,7 @@ def openai_chat(client):
     client.chat.completions = MagicMock()
     client.chat.completions.create = MagicMock(
         return_value=MagicMock(
+            id='123',
             choices=[
                 MagicMock(
                     message=MagicMock(
@@ -31,7 +32,8 @@ def openai_chat(client):
                         })
                     )
                 )
-            ]
+            ],
+            usage=MagicMock(total_tokens=500),
         )
     )
     return client
