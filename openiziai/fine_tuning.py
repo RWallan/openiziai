@@ -27,7 +27,7 @@ class FineTuning(BaseModel):
     client: OpenAI = Field(description='Client da OpenAI.')
     train_file: Path | str
     task: Task = Field()
-    model: str = Field(default='gpt-3.5-turbo')
+    base_model: str = Field(default='gpt-3.5-turbo')
     _file_id: str = PrivateAttr(default=None)
     _job_id: str = PrivateAttr(default=None)
     _job_status: JobStatus = PrivateAttr(default=None)
@@ -68,7 +68,7 @@ class FineTuning(BaseModel):
 
     def start(self) -> 'FineTuning':
         job = self.client.fine_tuning.jobs.create(
-            training_file=self.file_id, model=self.model
+            training_file=self.file_id, model=self.base_model
         )
         self._job_id = job.id
         print(
