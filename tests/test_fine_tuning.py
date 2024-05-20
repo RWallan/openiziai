@@ -32,6 +32,17 @@ def test_upload_file_to_openai(fine_tuning):
 
 
 def test_file_id_without_uploaded(fine_tuning):
-    with patch('builtins.open', mock_open(read_data="data")):
+    with patch('builtins.open', mock_open(read_data='data')):
         assert fine_tuning.file_id == 'file-id'
+
+
+def test_start_fine_tuning(fine_tuning):
+    with patch('builtins.open', mock_open(read_data='data')):
+        fine_tuning.start()
+        assert fine_tuning.job_id == 'job-id'
+
+
+def test_start_fine_tuning_besides_propertie(fine_tuning):
+    with patch('builtins.open', mock_open(read_data='data')):
+        assert fine_tuning.job_id == 'job-id'
 

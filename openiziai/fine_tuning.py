@@ -65,3 +65,21 @@ class FineTuning(BaseModel):
             )
             self.upload_file_to_openai()
         return self._file_id
+
+    def start(self) -> 'FineTuning':
+        job = self.client.fine_tuning.jobs.create(
+            training_file=self.file_id, model=self.model
+        )
+        self._job_id = job.id
+        print(
+            f'Fine tuning started: {self._job_id}.',
+            'Veja o status com `.status`.',
+        )
+        return self
+
+    @property
+    def job_id(self) -> str:
+        if not getattr(self, '_job_id'):
+            print('Nenhum fine tuning foi iniciado. Iniciando fine tuning.')
+            self.start()
+        return self._job_id
