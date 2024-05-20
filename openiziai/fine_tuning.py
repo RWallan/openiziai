@@ -83,3 +83,17 @@ class FineTuning(BaseModel):
             print('Nenhum fine tuning foi iniciado. Iniciando fine tuning.')
             self.start()
         return self._job_id
+
+    @property
+    def status(self) -> str:
+        if (
+            not getattr(self, '_job_status')
+            or self._job_status != JobStatus.COMPLETED
+        ):
+            _job_status = self.client.fine_tuning.jobs.retrieve(
+                self.job_id
+            ).status
+            print(_job_status)
+            self._job_status = JobStatus(_job_status)
+
+        return self._job_status.name

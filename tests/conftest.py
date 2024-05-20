@@ -43,6 +43,7 @@ def openai_fine_tuning(client):
     client.files.create.return_value.id = 'file-id'
     client.fine_tuning = MagicMock()
     client.fine_tuning.jobs.create.return_value.id = 'job-id'
+    client.fine_tuning.jobs.retrieve.return_value.status = 'succeeded'
     return client
 
 

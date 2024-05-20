@@ -55,3 +55,10 @@ def test_start_fine_tuning_besides_propertie(fine_tuning):
     with patch('builtins.open', mock_open(read_data='data')):
         assert fine_tuning.job_id == 'job-id'
 
+
+def test_retrieve_fine_tuning_status_with_completed(fine_tuning):
+    mock_path = MagicMock(spec=Path)
+    mock_path.stat.return_value.st_size = 100000
+
+    with patch('builtins.open', mock_open(read_data='data')):
+        assert fine_tuning.status == 'COMPLETED'
