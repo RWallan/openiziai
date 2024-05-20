@@ -86,10 +86,7 @@ class FineTuning(BaseModel):
 
     @property
     def status(self) -> str:
-        if (
-            not getattr(self, '_job_status')
-            or self._job_status != JobStatus.COMPLETED
-        ):
+        if self._job_status != JobStatus.COMPLETED:
             _job_status = self.client.fine_tuning.jobs.retrieve(
                 self.job_id
             ).status
