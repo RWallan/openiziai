@@ -105,7 +105,6 @@ class FineTuning(BaseModel):
 
         return self._job_status.name
 
-    # TODO: Consertar mocks para testar a propriedade
     @property
     def model(self) -> Optional[GPTModel]:
         if self._model:
