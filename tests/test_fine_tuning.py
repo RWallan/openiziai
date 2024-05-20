@@ -60,3 +60,15 @@ def test_retrieve_fine_tuning_status_with_completed(fine_tuning):
     with patch('builtins.open', mock_open(read_data='data')):
         fine_tuning.upload_file_to_openai().start()
         assert fine_tuning.status == 'COMPLETED'
+
+
+def test_repr_class(fine_tuning, valid_task, client):
+    assert repr(fine_tuning) == (
+        'FineTuning('
+        f'client={client}, '
+        f'train_file={fine_tuning.train_file}, '
+        f'task={valid_task}, '
+        f'base_model="gpt-3.5-turbo", '
+        f'model=None'
+        ')'
+    )

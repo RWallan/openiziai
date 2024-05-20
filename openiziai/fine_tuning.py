@@ -126,3 +126,14 @@ class FineTuning(BaseModel):
         self._model = GPTModel(
             name=model_name, base_model=self.base_model, task=self.task
         )
+
+    def __repr__(self) -> str:
+        return (
+            'FineTuning('
+            f'client={self.client}, '
+            f'train_file={self.train_file}, '
+            f'task={self.task}, '
+            f'base_model="{self.base_model}", '
+            f'model={self.model}'
+            ')'
+        )
