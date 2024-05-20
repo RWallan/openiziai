@@ -1,4 +1,7 @@
 # OPENIZIAI
+![Static Badge](https://img.shields.io/badge/python-3.11%7C3.12-blue)
+[![CI](https://github.com/RWallan/openiziai/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/RWallan/openiziai/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/github/RWallan/openiziai/branch/main/graph/badge.svg?token=FYZ1IOHC9Y)](https://codecov.io/github/RWallan/openiziai)
 
 !O projeto ainda está em fase de desenvolvimento. Toda a documentação e código fonte podem (e irão) sofrer alterações.!
 
