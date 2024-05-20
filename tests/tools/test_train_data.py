@@ -54,6 +54,8 @@ async def test_create_train_data(train_data_tool):
         assert len(example['messages']) == expected_len
         assert example['messages'][1]['role'] == 'user'
         assert example['messages'][2]['role'] == 'assistant'
+    assert train_data_tool.n_examples == n_examples
+    assert train_data_tool.n_batch == n_batch
 
 
 def test_init_invalid_data():
