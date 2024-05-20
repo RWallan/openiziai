@@ -49,7 +49,11 @@ def openai_fine_tuning():
     fine_tuning_mock = MagicMock(
         jobs=MagicMock(
             create=MagicMock(return_value=MagicMock(id='job-id')),
-            retrieve=MagicMock(return_value=MagicMock(status='succeeded')),
+            retrieve=MagicMock(
+                return_value=MagicMock(
+                    status='succeeded', fine_tuned_model='fine-tuned'
+                )
+            ),
         )
     )
 

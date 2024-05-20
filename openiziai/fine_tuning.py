@@ -127,6 +127,8 @@ class FineTuning(BaseModel):
             name=model_name, base_model=self.base_model, task=self.task
         )
 
+        return self._model
+
     def __repr__(self) -> str:
         return (
             'FineTuning('

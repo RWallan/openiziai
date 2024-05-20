@@ -72,3 +72,12 @@ def test_repr_class(fine_tuning, valid_task, openai_fine_tuning):
         f'model=None'
         ')'
     )
+
+
+def test_retrieve_fine_tuned_model(fine_tuning, valid_task):
+    with patch('builtins.open', mock_open(read_data='data')):
+        fine_tuning.upload_file_to_openai().start()
+        assert fine_tuning.model.name == 'fine-tuned'
+        assert fine_tuning.model.task == valid_task
+        assert fine_tuning.model.base_model == 'gpt-3.5-turbo'
+        assert fine_tuning.model.created_at
