@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 from unittest.mock import AsyncMock, call
 
@@ -22,7 +23,7 @@ async def test_create_examples(train_data_tool):
             {'role': 'assistant', 'content': 'Test response'},
         ]
     }
-    expected_messages = 10*[expected_message]
+    expected_messages = 10 * [expected_message]
 
     await train_data_tool.create_examples(
         n_examples, temperature, max_tokens, max_context_length, sender
@@ -56,6 +57,7 @@ async def test_create_train_data(train_data_tool):
         assert example['messages'][2]['role'] == 'assistant'
     assert train_data_tool.n_examples == n_examples
     assert train_data_tool.n_batch == n_batch
+    shutil.rmtree(Path().cwd() / 'data' / 'train')
 
 
 def test_init_invalid_data():
@@ -91,3 +93,4 @@ def test_execute(train_data_tool):
         assert len(example['messages']) == expected_len
         assert example['messages'][1]['role'] == 'user'
         assert example['messages'][2]['role'] == 'assistant'
+    shutil.rmtree(Path().cwd() / 'data' / 'train')
