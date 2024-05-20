@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from openai import OpenAI
 from pydantic import (
@@ -11,6 +11,7 @@ from pydantic import (
     field_validator,
 )
 
+from openiziai.schemas import GPTModel
 from openiziai.task import Task
 
 
@@ -31,6 +32,7 @@ class FineTuning(BaseModel):
     _file_id: str = PrivateAttr(default=None)
     _job_id: str = PrivateAttr(default=None)
     _job_status: JobStatus = PrivateAttr(default=None)
+    _model: GPTModel = PrivateAttr(default=None)
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -94,3 +96,20 @@ class FineTuning(BaseModel):
             self._job_status = JobStatus(_job_status)
 
         return self._job_status.name
+
+    # TODO: Consertar mocks para testar a propriedade
+    @property
+    def model(self) -> Optional[GPTModel]:
+        if self._model:
+            return self._model
+
+        model_name = self.client.fine_tuning.jobs.retrieve(
+            self.job_id
+        ).fine_tuned_model
+        if not model_name:
+            print(f'Modelo não disponível. Status: {self.status}')
+            return None
+
+        self._model = GPTModel(
+            name=model_name, base_model=self.base_model, task=self.task
+        )
