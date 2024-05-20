@@ -1,3 +1,4 @@
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,15 @@ from pydantic import (
 )
 
 from openiziai.task import Task
+
+
+class JobStatus(Enum):
+    VALIDATING = 'validating_files'
+    QUEUED = 'queued'
+    COMPLETED = 'succeeded'
+    RUNNING = 'running'
+    FAILED = 'failed'
+    CANCELLED = 'cancelled'
 
 
 class FineTuning(BaseModel):
