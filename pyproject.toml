@@ -2,8 +2,26 @@
 name = "openiziai"
 version = "0.1.0"
 description = "Interface para se comunicar com a api da OpenAI adotando as melhores práticas de LLM para criar e se comunicar com um agente."
+licence = "MIT"
 authors = ["RWallan <3am.richardwallan@gmail.com>"]
 readme = "README.md"
+packages = [{include = "openiziai"}]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: Portuguese (Brazilian)",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[tool.poetry.urls]
+"Document" = "https://github.com/RWallan/openiziai/blob/main/README.md"
+"Code" = "https://github.com/RWallan/openiziai.git"
+"Bug Tracker" = "https://github.com/RWallan/openiziai/issues"
+
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -34,6 +52,7 @@ quote-style = "single"
 
 [tool.ruff.lint]
 select = ["I", "F", "E", "W", "PL", "PT"]
+ignore = ["PLC0414"]
 
 [tool.pytest.ini_options]
 pythonpath = "."
