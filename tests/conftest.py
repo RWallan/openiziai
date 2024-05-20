@@ -17,7 +17,8 @@ def client():
 
 
 @pytest.fixture()
-def openai_chat(client):
+def openai_chat():
+    client = MagicMock(spec=OpenAI)
     client.chat = MagicMock()
     client.chat.completions = MagicMock()
     client.chat.completions.create = MagicMock(
@@ -40,12 +41,20 @@ def openai_chat(client):
 
 
 @pytest.fixture()
-def openai_fine_tuning(client):
-    client.files = MagicMock()
-    client.files.create.return_value.id = 'file-id'
-    client.fine_tuning = MagicMock()
-    client.fine_tuning.jobs.create.return_value.id = 'job-id'
-    client.fine_tuning.jobs.retrieve.return_value.status = 'succeeded'
+def openai_fine_tuning():
+    client = MagicMock(spec=OpenAI)
+    files_mock = MagicMock(
+        create=MagicMock(return_value=MagicMock(id='file-id'))
+    )
+    fine_tuning_mock = MagicMock(
+        jobs=MagicMock(
+            create=MagicMock(return_value=MagicMock(id='job-id')),
+            retrieve=MagicMock(return_value=MagicMock(status='succeeded')),
+        )
+    )
+
+    client.files = files_mock
+    client.fine_tuning = fine_tuning_mock
     return client
 
 

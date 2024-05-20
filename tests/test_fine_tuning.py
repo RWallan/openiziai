@@ -62,10 +62,10 @@ def test_retrieve_fine_tuning_status_with_completed(fine_tuning):
         assert fine_tuning.status == 'COMPLETED'
 
 
-def test_repr_class(fine_tuning, valid_task, client):
+def test_repr_class(fine_tuning, valid_task, openai_fine_tuning):
     assert repr(fine_tuning) == (
         'FineTuning('
-        f'client={client}, '
+        f'client={openai_fine_tuning}, '
         f'train_file={fine_tuning.train_file}, '
         f'task={valid_task}, '
         f'base_model="gpt-3.5-turbo", '
