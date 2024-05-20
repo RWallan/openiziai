@@ -94,3 +94,14 @@ def test_execute(train_data_tool):
         assert example['messages'][1]['role'] == 'user'
         assert example['messages'][2]['role'] == 'assistant'
     shutil.rmtree(Path().cwd() / 'data' / 'train')
+
+
+def test_repr(train_data_tool, valid_task):
+    assert repr(train_data_tool) == (
+        'TrainDataTool('
+        f'task={valid_task}, '
+        f'n_examples=None, '
+        f'n_batch=None, '
+        f'file=None'
+        ')'
+    )
