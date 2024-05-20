@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pytest
 from openai import OpenAI
 
-from openiziai.schemas import DataDict
 from openiziai.task import Task
 from openiziai.tools.train_data import TrainDataTool
 
@@ -48,7 +47,7 @@ def valid_task():
 
 @pytest.fixture()
 def valid_data_dict():
-    return DataDict(data={'key': 'value'})
+    return {'data': {'key': 'value'}}
 
 
 @pytest.fixture()
