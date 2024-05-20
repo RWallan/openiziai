@@ -36,6 +36,13 @@ def openai_chat(client):
 
 
 @pytest.fixture()
+def openai_fine_tuning(client):
+    client.files = MagicMock()
+    client.files.create.return_value.id = 'file-id'
+    return client
+
+
+@pytest.fixture()
 def valid_task():
     return Task(
         backstory='Test backstory',
