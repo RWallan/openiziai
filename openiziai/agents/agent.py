@@ -16,15 +16,16 @@ class Agent(BaseModel):
     _template: str
     _full_context: list[dict[str, Any]]
     _context: list[dict[str, Any]]
+    _fine_tuned_model: str
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
         self._template = self._build_template()
-        self.fine_tuned_model = (
+        self._fine_tuned_model = (
             self.model.name if self.model else self.fine_tuned_model
-        )
+        )  # pyright: ignore
 
     @model_validator(mode='after')
     def validate_model_info(self) -> Self:
@@ -45,11 +46,8 @@ class Agent(BaseModel):
         role = self.model.task.role if self.model else self.task.role  # pyright: ignore
         goal = self.model.task.goal if self.model else self.task.goal  # pyright: ignore
 
-        template = f"""This is your backstory:
-        ```backstory: {backstory}```
-        Your role is: {role}.
-        Your goal is: {goal}.
-        Answer with the `backstory` native language.
+        template = f"""{backstory}.
+        {{'your_role': {role}, 'your_goal': {goal}}}
         """
 
         return template
