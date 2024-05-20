@@ -1,3 +1,4 @@
+from .prep_data import prep_data
 from .train_data import TrainDataTool
 
-__all__ = ['TrainDataTool']
+__all__ = ['prep_data', 'TrainDataTool']
