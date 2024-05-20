@@ -24,9 +24,9 @@ class JobStatus(Enum):
 
 
 class FineTuning(BaseModel):
-    client: OpenAI = Field(default=None, description='Client da OpenAI.')
+    client: OpenAI = Field(description='Client da OpenAI.')
     train_file: Path | str
-    task: Task = Field(default=None)
+    task: Task = Field()
     model: str = Field(default='gpt-3.5-turbo')
     _file_id: str = PrivateAttr(default=None)
     _job_id: str = PrivateAttr(default=None)

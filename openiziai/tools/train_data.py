@@ -38,11 +38,9 @@ class TrainDataTool(BaseModel):
 
     client: OpenAI = Field(default=None, description='Client da OpenAI.')
     data: DataDict = Field(
-        default=None,
         description='Dados utilizados para construir o dado de treino.',
     )
     task: Task = Field(
-        default=None,
         description='Descrição da task que o modelo deverá executar.',
     )
     model: str = Field(
