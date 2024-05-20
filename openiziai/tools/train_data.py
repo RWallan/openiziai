@@ -286,9 +286,7 @@ class TrainDataTool(BaseModel):
     def __repr__(self) -> str:
         return (
             'TrainDataTool('
-            f'backstory={self.task.backstory},'
-            f'role={self.task.role}, '
-            f'goal={self.task.goal}, '
+            f'task={self.task} '
             f'n_examples={self.n_examples}, '
             f'n_batch={self.n_batch}, '
             f'file={self.file}'
