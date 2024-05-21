@@ -42,9 +42,16 @@ class AgentManager(BaseModel):
         if self.context_exporter:
             self._ctx_handler.export_history(self.context_exporter)
 
-    def prompt(self, prompt: str):
+    def prompt(
+        self,
+        prompt: str,
+        temperature: float = 0.5,
+        max_tokens: int = 1000,
+    ):
         self._ctx_handler.add(Message(content=prompt))
-        response = self.agent.prompt(prompt)
+        response = self.agent.prompt(
+            prompt, temperature=temperature, max_tokens=max_tokens
+        )
         if response.response:
             self._ctx_handler.add(
                 Message(role='assistant', content=response.response)
