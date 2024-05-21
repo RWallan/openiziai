@@ -5,7 +5,9 @@ from unittest.mock import MagicMock
 import pytest
 from openai import OpenAI
 
+from openiziai.contexts import ContextHandler
 from openiziai.fine_tuning import FineTuning
+from openiziai.schemas import GPTModel
 from openiziai.task import Task
 from openiziai.tools.train_data import TrainDataTool
 
@@ -96,3 +98,14 @@ def train_data_tool(openai_chat, valid_task, valid_data_dict):
         data=valid_data_dict,
         task=valid_task,
     )
+
+
+@pytest.fixture()
+def context(valid_task, tmp_path):
+    agent_model = GPTModel(
+        name='fine-tuned', task=valid_task, base_model='gpt-3.5-turbo'
+    )
+    ctx = ContextHandler(
+        max_context_length=3, context_store=tmp_path, agent_model=agent_model
+    )
+    return ctx
