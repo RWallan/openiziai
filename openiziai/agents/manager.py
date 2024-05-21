@@ -51,7 +51,9 @@ class AgentManager(BaseModel):
     ):
         self._ctx_handler.add(Message(content=prompt))
         response = self.agent.prompt(
-            prompt, temperature=temperature, max_tokens=max_tokens
+            history=self._ctx_handler.history,
+            temperature=temperature,
+            max_tokens=max_tokens,
         )
         if response.response:
             self._ctx_handler.add(
