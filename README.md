@@ -4,6 +4,7 @@
 [![CI](https://github.com/RWallan/openiziai/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/RWallan/openiziai/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/github/RWallan/openiziai/branch/main/graph/badge.svg?token=FYZ1IOHC9Y)](https://codecov.io/github/RWallan/openiziai)
 ![GitHub License](https://img.shields.io/github/license/RWallan/openiziai)
+![PyPI - Version](https://img.shields.io/pypi/v/openiziai)
 
 O projeto ainda está em suas primeiras versões. Isso significa que o projeto está em constante mudanças e todo feedback é bem vindo!
 
@@ -16,6 +17,12 @@ OpeniziAI é um projeto que disponibiliza uma interface que implementa práticas
 - Aplicar fine tuning nos seus dados
 
 - Criar agentes especializados
+
+## Como instalar
+
+```bash
+pip install openiziai
+```
 
 ## Como usar
 
