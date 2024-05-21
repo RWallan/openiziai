@@ -2,9 +2,9 @@
 
 import sys
 from datetime import datetime
-from typing import Any, Protocol
+from typing import Any, Literal, Optional, Protocol
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 from pydantic.dataclasses import dataclass
 
 from openiziai.task import Task
@@ -33,5 +33,10 @@ class GPTModel:
 
     name: str
     task: Task
-    base_model: str
+    base_model: Optional[str] = None
     created_at: datetime = Field(init=False, default_factory=datetime.now)
+
+
+class Message(BaseModel):
+    role: Literal['assistant', 'user'] = 'user'
+    content: str

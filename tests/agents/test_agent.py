@@ -2,7 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from openiziai.agents.agent import Agent
-from openiziai.schemas import GPTModel
+from openiziai.schemas import GPTModel, Message
 
 
 def test_initiate_with_model(client, valid_task):
@@ -50,10 +50,46 @@ def test_agent_prompt(openai_chat, valid_task):
     expected_temperature = 0.5
 
     result = agent.prompt(prompt='teste')
+    print(result.response)
 
     assert result.id == '123'
     assert result.prompt == 'teste'
     assert result.temperature == expected_temperature
     assert result.total_tokens == expected_token
-    assert result.response
+    assert (
+        result.response
+        == '{"prompt": "Test prompt", "response": "Test response"}'
+    )
     assert result.fine_tuned_model == 'model'
+
+
+def test_agent_without_any_prompt(openai_chat, valid_task):
+    gpt_model = GPTModel(
+        name='model', base_model='gpt-3.5-turbo', task=valid_task
+    )
+    agent = Agent(
+        client=openai_chat,
+        model=gpt_model,
+    )
+
+    with pytest.raises(
+        ValueError, match='`prompt` ou `history` precisam ser passados.'
+    ):
+        agent.prompt()
+
+
+def test_agent_with_context(openai_chat, valid_task):
+    gpt_model = GPTModel(
+        name='model', base_model='gpt-3.5-turbo', task=valid_task
+    )
+    agent = Agent(
+        client=openai_chat,
+        model=gpt_model,
+    )
+
+    result = agent.prompt(history=[Message(content='teste')])
+
+    assert (
+        result.response
+        == '{"prompt": "Test prompt", "response": "Test response"}'
+    )

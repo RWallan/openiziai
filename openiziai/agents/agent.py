@@ -6,7 +6,7 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.dataclasses import dataclass
 
-from openiziai.schemas import GPTModel
+from openiziai.schemas import GPTModel, Message
 from openiziai.task import Task
 
 
@@ -90,6 +90,10 @@ class Agent(BaseModel):
                 raise ValueError(
                     'Precisa de um `model` ou um `fine_tuned_model` e `task`.'
                 )
+            self.model = GPTModel(
+                name=self.fine_tuned_model,  # pyright: ignore
+                task=self.task,  # pyright: ignore
+            )
 
         return self
 
@@ -109,7 +113,11 @@ class Agent(BaseModel):
         return template
 
     def prompt(
-        self, prompt: str, temperature: float = 0.5, max_tokens: int = 1000
+        self,
+        prompt: Optional[str] = None,
+        history: Optional[list[Message]] = None,
+        temperature: float = 0.5,
+        max_tokens: int = 1000,
     ) -> PromptResponse:
         """Executa o prompt para o modelo de fine tuning.
 
@@ -124,16 +132,26 @@ class Agent(BaseModel):
         Returns:
             PromptResponse: Informações do prompt construído.
         """
-        messages = [
-            {
-                'role': 'system',
-                'content': self._template,
-            },
-            {
-                'role': 'user',
-                'content': prompt,
-            },
-        ]
+        if history:
+            _history = [m.model_dump() for m in history]
+            messages = [{'role': 'system', 'content': self._template}].extend(
+                _history
+            )
+            _prompt = _history[-1].get('content')
+        elif prompt:
+            _prompt = prompt
+            messages = [
+                {
+                    'role': 'system',
+                    'content': self._template,
+                },
+                {
+                    'role': 'user',
+                    'content': _prompt,
+                },
+            ]
+        else:
+            raise ValueError('`prompt` ou `history` precisam ser passados.')
 
         result = self.client.chat.completions.create(
             messages=messages,  # pyright: ignore
@@ -144,7 +162,7 @@ class Agent(BaseModel):
 
         response = PromptResponse(
             id=result.id,
-            prompt=prompt,
+            prompt=_prompt,  # pyright: ignore
             response=result.choices[0].message.content,
             temperature=temperature,
             total_tokens=result.usage.total_tokens if result.usage else None,
