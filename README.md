@@ -85,9 +85,9 @@ my_model = fine_tuning.model
 # >>> GPTModel(name='your_model_id', task=Task(...), base_model='gpt-3.5-turbo', created_at=datetime(...))
 
 # Construa o seu agente
-my_agent = openiziai.Agent(model=my_model)
+my_agent = openiziai.Agent(client=client, model=my_model)
 # ou
-my_agent = openiziai.Agent(model='your_model_id', task=task)
+my_agent = openiziai.Agent(client=client, model='your_model_id', task=task)
 
 response = my_agent.prompt('o que eu consigo fazer com o openiziai?')
 # >>> PromptResponse(
