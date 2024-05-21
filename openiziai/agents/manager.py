@@ -45,6 +45,7 @@ class AgentManager(BaseModel):
     def prompt(
         self,
         prompt: str,
+        *,
         temperature: float = 0.5,
         max_tokens: int = 1000,
     ):

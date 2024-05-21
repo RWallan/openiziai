@@ -115,6 +115,7 @@ class Agent(BaseModel):
     def prompt(
         self,
         prompt: Optional[str] = None,
+        *,
         history: Optional[list[Message]] = None,
         temperature: float = 0.5,
         max_tokens: int = 1000,
