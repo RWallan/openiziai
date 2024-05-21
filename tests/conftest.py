@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from openai import OpenAI
 
+from openiziai.agents import Agent
 from openiziai.contexts import ContextHandler
 from openiziai.fine_tuning import FineTuning
 from openiziai.schemas import GPTModel
@@ -109,3 +110,14 @@ def context(valid_task, tmp_path):
         max_context_length=3, context_store=tmp_path, agent_model=agent_model
     )
     return ctx
+
+
+@pytest.fixture()
+def agent(openai_chat, valid_task):
+    agent = Agent(
+        client=openai_chat,
+        task=valid_task,
+        fine_tuned_model='fine-tuned',
+    )
+
+    return agent
