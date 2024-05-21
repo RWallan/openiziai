@@ -25,16 +25,7 @@ class TrainDataTool(BaseModel):
 
     Cria os dados para construir um fine tuning de um modelo LLM centrado
     em uma task contendo: backstory, role e o goal.
-
-    :param client: Client da OpenAI.
-    :param data: Dados utilizados para construir o dado e treino.
-    :param task: Descrição da task que o modelo deverá executar.
-    :param model: Modelo GPT usado para criar os dados para treino. Padrão gpt-3.5-turbo-125.
-    :type client: OpenAI
-    :type data: DataDict
-    :type task: Task
-    :type model: str
-    """  # noqa
+    """
 
     client: OpenAI = Field(default=None, description='Client da OpenAI.')
     data: DataDict = Field(
@@ -60,8 +51,12 @@ class TrainDataTool(BaseModel):
     def __init__(self, **data: Any) -> None:
         """Cria um novo modelo analisando e validando o input.
 
-        Raises [ValidationError][pydantic_core.ValidationError]
-        se os inputs não podem ser validados para forma um modelo válido.
+        Args:
+            client (OpenAI): Client da OpenAI.
+            data (DataDict): Dados utilizados para construir o dado de treino.
+            task (Task): Descrição da task que o modelo treinado irá executar.
+            model (str): Modelo GPT usado para criar os dados de treino.
+                Padrão gpt-3.5-turbo-125.
         """
         super().__init__(**data)
         self._template = """You are generating data which will be used to train a machine learning model.
@@ -80,10 +75,12 @@ class TrainDataTool(BaseModel):
 
     @property
     def id(self) -> str:
+        """Hash da classe."""
         return self._hash
 
     @property
     def train_data_dir(self) -> str:
+        """Diretório que os dados de treino serão salvos."""
         return str(self._train_data_dir)
 
     @staticmethod
@@ -101,6 +98,22 @@ class TrainDataTool(BaseModel):
         max_context_length: int,
         sender: trio.abc.SendChannel[list[dict[str, str]]],
     ) -> None:
+        """Cria exemplos com o par: prompt/response.
+
+        Utilizando um modelo GPT, cria exemplos com o par prompt/response no
+            formato de json.
+
+        Args:
+            n_examples (int): Número de exemplos que serão criados.
+            temperature (float): Temperatura que controla a criatividade ao
+                criar os exemplos.
+            max_tokens (int): Máximo de tokens que deve conter nas respostas.
+                Valores maiores trarão prompts e responses maiores porém
+                terá maior custo.
+            max_context_length (int): Quantidade de exemplos que devem ser
+                usados como contexto ao criar o próximo.
+            sender (SendChannel): Canal de Pub par aplicar o Pub/Sub.
+        """
         description = dict(
             backstory=self.task.backstory,
             role=self.task.role,
@@ -161,6 +174,13 @@ class TrainDataTool(BaseModel):
             await sender.send(examples)
 
     async def create_train_file(self, receiver: trio.abc.ReceiveChannel):
+        """Salva os exemplos gerados em um arquivo jsonl.
+
+        Método Sub do sistema Pub/Sub.
+
+        Args:
+            receiver (ReceiveChannel): Canal de receive do sistema de Pub/Sub.
+        """
         self._file = (
             self._train_data_dir
             / f'train_{self.id}_{datetime.now().strftime("%Y%m%d")}.jsonl'
@@ -187,19 +207,24 @@ class TrainDataTool(BaseModel):
     ) -> str:
         """Cria os dados de treino.
 
-        :param n_examples: Número de exemplos que devem ser criados.
-        :param n_batch: Número de batches para ser feitos concorrentes.
-        :param temperature: Nível de criatividade do modelo ao criar os exemplos. Padrão 0.5.
-        :param max_tokens: Limite de tokens da resposta do modelo. Padrão 1000.
-        :max_context_length: Limite de exemplos utilizados para contexto.
-        :type n_examples: int
-        :type n_batch: int
-        :type temperature: float
-        :type max_tokens: int
-        :type max_context_length: int
-        :return: Nome do arquivo JSONL salvo.
-        :rtype: str
-        """  # noqa
+        Aplica o sistema de Pub/Sub para criar os exemplos e salvar em um jsonl
+            a medida que os batches de treino ficam prontos.
+
+        Args:
+            n_examples (int): Número de exemplos que devem ser criados.
+            n_batch (int): Número de batches para serem executados de forma
+                concorrente.
+            temperature (float): Nível de criatividade do modelo ao criar os
+                exemplos. Padrão 0.5.
+            max_tokens (int): Máximo de tokens que deve conter nas respostas.
+                Valores maiores trarão prompts e responses maiores porém
+                terá maior custo.
+            max_context_length (int): Quantidade de exemplos que devem ser
+                usados como contexto ao criar o próximo.
+
+        Returns:
+            str: Nome do arquivo JSONL criado.
+        """
         sender, receiver = trio.open_memory_channel(0)
         self._n_batch = n_batch
         _n_examples = ceil(n_examples / self._n_batch)
@@ -225,7 +250,7 @@ class TrainDataTool(BaseModel):
 
     @property
     def n_examples(self) -> Optional[int]:
-        # if not getattr(self, '_n_examples'):
+        """Número de exemplos criados."""
         if not self._n_examples:
             print(
                 'Você deve criar um dataset de treino com `create_train_data`.'
@@ -235,6 +260,7 @@ class TrainDataTool(BaseModel):
 
     @property
     def n_batch(self) -> Optional[int]:
+        """Número de batches utilizados."""
         if not getattr(self, '_n_batch'):
             print(
                 'Você deve criar um dataset de treino com `create_train_data`.'
@@ -250,20 +276,21 @@ class TrainDataTool(BaseModel):
         max_tokens: int = 1000,
         max_context_length: int = 8,
     ) -> str:
-        """Cria os dados de treino.
+        """Executa todo o pipeline para criar os dados de treino.
+        Args:
+            n_examples (int): Número de exemplos que devem ser criados.
+            n_batch (int): Número de batches para serem executados de forma
+                concorrente.
+            temperature (float): Nível de criatividade do modelo ao criar os
+                exemplos. Padrão 0.5.
+            max_tokens (int): Máximo de tokens que deve conter nas respostas.
+                Valores maiores trarão prompts e responses maiores porém
+                terá maior custo.
+            max_context_length (int): Quantidade de exemplos que devem ser
+                usados como contexto ao criar o próximo.
 
-        :param n_examples: Número de exemplos que devem ser criados.
-        :param n_batch: Número de batches para ser feitos concorrentes.
-        :param temperature: Nível de criatividade do modelo ao criar os exemplos. Padrão 0.5.
-        :param max_tokens: Limite de tokens da resposta do modelo. Padrão 1000.
-        :max_context_length: Limite de exemplos utilizados para contexto.
-        :type n_examples: int
-        :type n_batch: int
-        :type temperature: float
-        :type max_tokens: int
-        :type max_context_length: int
-        :return: Nome do arquivo JSONL salvo.
-        :rtype: str
+        Returns:
+            str: Nome do arquivo JSONL criado.
         """  # noqa
         file = trio.run(
             self.create_train_data,
@@ -278,6 +305,7 @@ class TrainDataTool(BaseModel):
 
     @property
     def file(self) -> Optional[str]:
+        """Nome do arquivo com os dados de treino."""
         if not hasattr(self, '_file'):
             print('Nenhum dado de treino foi criado com esta instância.')
             return None
