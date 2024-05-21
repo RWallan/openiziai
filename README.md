@@ -105,7 +105,7 @@ Basta utilizar o gerenciador de contexto para gerenciar seus contextos!
 
 ```python
 # ...
-with AgentManager(
+with openiziai.agents.AgentManager(
     agent=my_agent,
     context_store='path/to/your/context/store',
     max_context_length=10,
