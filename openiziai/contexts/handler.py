@@ -45,6 +45,7 @@ class ContextHandler(BaseModel):
 
     def add(self, message: Message):
         self._history.append(message)
+        self._context.history = self._history
 
     def save(self):
         self._context.history = self._history
