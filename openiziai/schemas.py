@@ -38,5 +38,6 @@ class GPTModel:
 
 
 class Message(BaseModel):
+    """Representa a interação de um Agente."""
     role: Literal['assistant', 'user'] = 'user'
     content: str

@@ -13,6 +13,7 @@ Exporter = Callable[[list[Message]], Any]
 
 
 class ContextHandler(BaseModel):
+    """Implementa os métodos necessários para criar o contexto do Agente."""
     max_context_length: PositiveInt
     context_store: Path
     agent_model: Optional[GPTModel] = None
@@ -29,6 +30,7 @@ class ContextHandler(BaseModel):
         )
 
     def create(self, overwrite: bool = False):
+        """Cria ou limpa o contexto de um agente."""
         if len(self._history) > 0 and not overwrite:
             raise Exception(
                 (
@@ -41,13 +43,16 @@ class ContextHandler(BaseModel):
 
     @property
     def history(self) -> list[Message]:
+        """Retorna o histórico de interações do Agente."""
         return self._history[-self.max_context_length :]
 
     def add(self, message: Message):
+        """Adiciona uma interação no contexto."""
         self._history.append(message)
         self._context.history = self._history
 
     def save(self):
+        """Salva o contexto como um pickle."""
         self._context.history = self._history
         self.context_store.mkdir(parents=True, exist_ok=True)
         with open(
@@ -56,8 +61,12 @@ class ContextHandler(BaseModel):
             pickle.dump(asdict(self._context), file, protocol=-1)
 
     def export_history(self, func: Exporter):
+        """Executa uma função exporter para salvar todo o histório de
+        interações do Agente.
+        """
         func(self._history)
 
     @property
     def context(self) -> Context:
+        """Retorna o contexto do Agente."""
         return self._context

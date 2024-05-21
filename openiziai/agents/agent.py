@@ -124,6 +124,7 @@ class Agent(BaseModel):
 
         Args:
             prompt (str): Prompt.
+            history (list[Message] | None): Histórico de interações do Agente.
             temperature (float): Temperatura que controla a criatividade ao
                 construir a resposta
             max_tokens (int): Máximo de tokens que deve conter nas respostas.

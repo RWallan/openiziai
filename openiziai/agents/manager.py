@@ -10,6 +10,10 @@ from .agent import Agent
 
 
 class AgentManager(BaseModel):
+    """Gerenciador de contexto capaz de gerenciar o contexto de interações do
+    agente.
+    """
+
     agent: Agent
     pre_context: Optional[Context] = None
     context_store: Path = Path().cwd() / 'data/contexts'
@@ -49,6 +53,20 @@ class AgentManager(BaseModel):
         temperature: float = 0.5,
         max_tokens: int = 1000,
     ):
+        """Executa o prompt para o Agente.
+
+        Args:
+            prompt (str): Prompt.
+            temperature (float): Temperatura que controla a criatividade ao
+                construir a resposta
+            max_tokens (int): Máximo de tokens que deve conter nas respostas.
+                Valores maiores trarão respostas maiores porém terá maior
+                custo.
+
+        Returns:
+            PromptResponse: Informações do prompt construído.
+        """
+
         self._ctx_handler.add(Message(content=prompt))
         response = self.agent.prompt(
             history=self._ctx_handler.history,
@@ -64,4 +82,5 @@ class AgentManager(BaseModel):
 
     @property
     def context(self) -> Context:
+        """O contexto completo do Agente."""
         return self._ctx_handler.context

@@ -9,6 +9,7 @@ from openiziai.schemas import GPTModel, Message
 
 @dataclass
 class Context:
+    """Contexto de um Agente."""
     agent_model: GPTModel
     history: list[Message]
     max_context_length: PositiveInt
