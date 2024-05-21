@@ -2,6 +2,6 @@
 
 __version__ = '0.1.0'
 
-from .agents import Agent as Agent
-from .fine_tuning import FineTuning as FineTuning
+from . import agents as agents
+from . import tools as tools
 from .task import Task as Task

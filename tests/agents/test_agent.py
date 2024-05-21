@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from openiziai.agents.agent import Agent
+from openiziai.agents import Agent
 from openiziai.schemas import GPTModel, Message
 
 
@@ -50,7 +50,6 @@ def test_agent_prompt(openai_chat, valid_task):
     expected_temperature = 0.5
 
     result = agent.prompt(prompt='teste')
-    print(result.response)
 
     assert result.id == '123'
     assert result.prompt == 'teste'

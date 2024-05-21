@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, call
 import pytest
 from pydantic import ValidationError
 
-from openiziai.tools.train_data import TrainDataTool
+from openiziai.tools import TrainDataTool
 
 
 @pytest.mark.trio()

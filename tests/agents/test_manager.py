@@ -1,6 +1,6 @@
 import pytest
 
-from openiziai.agents.manager import AgentManager
+from openiziai.agents import AgentManager
 from openiziai.schemas import Message
 
 

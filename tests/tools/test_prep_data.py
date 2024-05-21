@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from openiziai.tools.prep_data import prep_data
+from openiziai.tools import prep_data
 
 
 def test_prep_data_with_persistant_data():

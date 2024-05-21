@@ -126,7 +126,6 @@ class FineTuning(BaseModel):
 
         if self._job_status != JobStatus.COMPLETED:
             _job_status = self.client.fine_tuning.jobs.retrieve(job_id).status
-            print(_job_status)
             self._job_status = JobStatus(_job_status)
 
         return self._job_status.name
