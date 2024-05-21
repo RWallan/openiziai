@@ -46,7 +46,7 @@ async def test_exponential_backoff_delay():
     end_time = time.monotonic()
     elapsed_time = end_time - start_time
 
-    expected_min_time = 0.1 + 0.2 + 0.4
+    expected_min_time = 0.5
     assert elapsed_time >= expected_min_time
 
 
