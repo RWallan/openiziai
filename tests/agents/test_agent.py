@@ -54,6 +54,6 @@ def test_agent_prompt(openai_chat, valid_task):
     assert result.id == '123'
     assert result.prompt == 'teste'
     assert result.temperature == expected_temperature
-    assert result.tokens == expected_token
+    assert result.total_tokens == expected_token
     assert result.response
     assert result.fine_tuned_model == 'model'

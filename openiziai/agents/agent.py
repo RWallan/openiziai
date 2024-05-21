@@ -18,7 +18,7 @@ class PromptResponse:
     prompt: str
     response: str | None
     temperature: float
-    tokens: int | None
+    total_tokens: int | None
     fine_tuned_model: str
 
 
@@ -147,7 +147,7 @@ class Agent(BaseModel):
             prompt=prompt,
             response=result.choices[0].message.content,
             temperature=temperature,
-            tokens=result.usage.total_tokens if result.usage else None,
+            total_tokens=result.usage.total_tokens if result.usage else None,
             fine_tuned_model=self._fine_tuned_model,
         )
 
