@@ -88,7 +88,7 @@ class Agent(BaseModel):
         if not self.model:
             if not self.fine_tuned_model and not self.task:
                 raise ValueError(
-                    'Precisa de um `model` ou um `model_name` e `task`.'
+                    'Precisa de um `model` ou um `fine_tuned_model` e `task`.'
                 )
 
         return self
