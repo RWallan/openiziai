@@ -70,8 +70,6 @@ fine_tuning = openiziai.FineTuning(
 
 ## Envie seu dado de treino e inicie fine tuning para a OpenAI
 fine_tuning.upload_file_to_openai().start()
-## Inicie o fine tuning
-fine_tuning.start() # >>> Fine tuning started: {job_id}. Veja o status com `.status`
 fine_tuning.status # >>> QUEUED
 fine_tuning.status # >>> RUNNING
 fine_tuning.status # >>> COMPLETED
@@ -86,17 +84,17 @@ my_agent = openiziai.agents.Agent(client=client, model=my_model)
 my_agent = openiziai.agents.Agent(client=client, model='your_model_id', task=task)
 
 response = my_agent.prompt('o que eu consigo fazer com o openiziai?')
-# >>> PromptResponse(
-# >>> ... id='prompt-id',
-# >>> ... prompt='o que eu consigo fazer com o openiziai?',
-# >>> ... response='Construir tasks, utilizar tools, aplicar fine tuning e construir agentes especializados',
-# >>> ... temperature=0.5,
-# >>> ... tokens=500
-# >>> ... fine_tuned_model='your_model_id'
+# >>> promptresponse(
+# ...    id='prompt-id',
+# ...    prompt='o que eu consigo fazer com o openiziai?',
+# ...    response='construir tasks, utilizar tools, aplicar fine tuning e construir agentes especializados',
+# ...    temperature=0.5,
+# ...    tokens=500
+# ...    fine_tuned_model='your_model_id'
 # >>> )
 
 response.response
-# >>> Construir tasks, utilizar tools, aplicar fine tuning e construir agentes especializados
+# >>> construir tasks, utilizar tools, aplicar fine tuning e construir agentes especializados
 ```
 
 Você também pode manter o contexto das suas interações com o seu agente.
