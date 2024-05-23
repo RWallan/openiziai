@@ -134,24 +134,19 @@ class Agent(BaseModel):
         Returns:
             PromptResponse: Informações do prompt construído.
         """
+        messages = [{'role': 'system', 'content': self._template}]
         if history:
             _history = [m.model_dump() for m in history]
-            messages = [{'role': 'system', 'content': self._template}].extend(
-                _history
-            )
+            messages.extend(_history)
             _prompt = _history[-1].get('content')
         elif prompt:
             _prompt = prompt
-            messages = [
-                {
-                    'role': 'system',
-                    'content': self._template,
-                },
+            messages.extend([
                 {
                     'role': 'user',
                     'content': _prompt,
                 },
-            ]
+            ])
         else:
             raise ValueError('`prompt` ou `history` precisam ser passados.')
 
